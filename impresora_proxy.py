@@ -49,7 +49,7 @@ def imprimir():
     
     datos = request.json
     p = conectar_impresora()
-    print(f"Conectado a la impresora {hex(Vendor_ID)}:{hex(PRODUCT_ID)}")
+    print(f"Conectado a la impresora {hex(VENDOR_ID)}:{hex(PRODUCT_ID)}")
     
     if not p:
         return jsonify({"status": "error", "message": "Impresora no encontrada"}), 500
@@ -118,6 +118,7 @@ def imprimir():
                 p.set(align='center')
                 p.image(sii_img)
                 p.text("TIMBRE ELECTRONICO SII\n")
+                time.sleep(0.5)  # Pequeña pausa para asegurar que el timbre se imprima correctamente
             except: pass
 
         # --- 8. PIE DE PAGINA LEGAL Y LARGO ---

@@ -8,8 +8,8 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 echo -e "${BLUE}===============================================${NC}"
-echo -e "${BLUE}   SÚPER INSTALADOR POS PROXY - J&D SOFTWARE   ${NC}"
-echo -e "${BLUE}          Farmacias Galeno-Apotheca            ${NC}"
+echo -e "${BLUE}  SÚPER INSTALADOR POS PROXY - by Jhoan Montero${NC}"
+echo -e "${BLUE}         Farmacias Galeno-Apotheca             ${NC}"
 echo -e "${BLUE}===============================================${NC}"
 
 # 1. DEPENDENCIAS
@@ -24,7 +24,7 @@ echo "Dispositivos USB conectados actualmente:"
 echo "------------------------------------------------"
 lsusb
 echo "------------------------------------------------"
-echo -e "${YELLOW}Pista: Busca el ID que corresponda a tu impresora (ej: 1fc9:2016)${NC}"
+echo -e "${YELLOW}Busca el ID que corresponda a tu impresora (ej: 1fc9:2016)${NC}"
 
 read -p "Ingresa el VendorID (los 4 caracteres antes de los :): " V_ID
 read -p "Ingresa el ProductID (los 4 caracteres después de los :): " P_ID
@@ -53,7 +53,7 @@ CURRENT_DIR=$(pwd)
 
 sudo tee /etc/systemd/system/pos_proxy.service > /dev/null <<EOF
 [Unit]
-Description=J&D POS Proxy Service
+Description=POS Proxy Service
 After=network.target
 
 [Service]
@@ -74,5 +74,5 @@ sudo systemctl enable pos_proxy.service
 sudo systemctl restart pos_proxy.service
 
 echo -e "\n${GREEN}===============================================${NC}"
-echo -e "${GREEN}    ¡SÚPER INSTALACIÓN COMPLETADA CON ÉXITO!    ${NC}"
+echo -e "${GREEN}    ¡INSTALACIÓN COMPLETADA CON ÉXITO!    ${NC}"
 echo -e "${BLUE}===============================================${NC}"
