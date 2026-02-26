@@ -6,7 +6,11 @@ import base64
 from io import BytesIO
 from PIL import Image
 import os
+from dotenv import load_dotenv
 
+
+# Cargar las variables del archivo .env
+load_dotenv()
 # --- RUTAS DINÁMICAS ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # Asegúrate de que este archivo exista en la misma carpeta que el script
@@ -14,15 +18,17 @@ PATH_LOGO = os.path.join(BASE_DIR, "farmacias_apotheca.png")
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
+print(os.getenv('PRINTER_VENDOR_ID'),os.getenv('PRINTER_PRODUCT_ID'))
 
 # IDs de la Printer-80
-VENDOR_ID = 0x1fc9
-PRODUCT_ID = 0x2016
+VENDOR_ID = int(os.getenv('PRINTER_VENDOR_ID'), 16)
+PRODUCT_ID = int(os.getenv('PRINTER_PRODUCT_ID'), 16)
 
 def conectar_impresora():
     """Intenta conectar por los canales comunes de la Printer-80"""
     for canal in [0x03, 0x02, 0x01]:
         try:
+        
             return Usb(VENDOR_ID, PRODUCT_ID, out_ep=canal)
         except:
             continue
@@ -43,6 +49,7 @@ def imprimir():
     
     datos = request.json
     p = conectar_impresora()
+    print(f"Conectado a la impresora {hex(Vendor_ID)}:{hex(PRODUCT_ID)}")
     
     if not p:
         return jsonify({"status": "error", "message": "Impresora no encontrada"}), 500
