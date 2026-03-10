@@ -12,10 +12,12 @@ echo -e "${BLUE}  INSTALADOR POS PROXY - by Jhoan Montero      ${NC}"
 echo -e "${BLUE}         Farmacias Galeno-Apotheca             ${NC}"
 echo -e "${BLUE}===============================================${NC}"
 
+
+
 # 1. DEPENDENCIAS
 echo -e "\n${YELLOW}[1/5] Instalando dependencias de Python y USB...${NC}"
 sudo apt update
-sudo apt install -y python3-pip python3-pil libusb-1.0-0-dev
+sudo apt install -y python3-pip python3-pil libusb-1.0-0-dev python3-usb
 pip3 install flask flask-cors python-escpos Pillow python-dotenv --break-system-packages
 
 # 2. DETECCIÓN INTERACTIVA DE IMPRESORA
