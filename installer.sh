@@ -8,7 +8,7 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 echo -e "${BLUE}===============================================${NC}"
-echo -e "${BLUE}  SÚPER INSTALADOR POS PROXY - by Jhoan Montero${NC}"
+echo -e "${BLUE}  INSTALADOR POS PROXY - by Jhoan Montero      ${NC}"
 echo -e "${BLUE}         Farmacias Galeno-Apotheca             ${NC}"
 echo -e "${BLUE}===============================================${NC}"
 
