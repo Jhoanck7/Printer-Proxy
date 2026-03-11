@@ -66,7 +66,7 @@ def imprimir():
     try:
         p.hw("init")
         
-        # --- 1. LOGO ---
+        # --- LOGO ---
         if os.path.exists(PATH_LOGO):
             try:
                 img_logo = Image.open(PATH_LOGO).convert('L')
@@ -75,23 +75,24 @@ def imprimir():
                 p.image(img_logo)
             except: pass
 
-        # --- 2. ENCABEZADO ---
+        # --- ENCABEZADO ---
+        p.text("\n\n")
         p.set(align='center', bold=True)
         p.text(f"{datos.get('company_name', 'FARMACIAS APOTHECA').upper()}\n")
         p.set(align='center', bold=False)
         p.text(f"{datos.get('company_location', '')}\n")
-        p.text(f"{datos.get('company_city', '')}\n\n")
+        p.text(f"{datos.get('company_city', '')}\n")
 
-        # --- 3. RECUADRO LEGAL (48 CARACTERES) ---
+        # --- RECUADRO LEGAL (48 CARACTERES) ---
         # El cuadro ahora mide 40 caracteres para dejar margen a los lados
         p.set(align='center', bold=True)
-        p.text("" + "-"*40 + "\n")
+        p.text("" + "-"*25 + "\n")
         p.text(f"RUT:{datos.get('company_rut', '')} \n")
         p.text(f" {datos.get('document_type', '')} \n")
         p.text(f"Nº: {datos.get('voucher_number', '')} \n")
-        p.text("" + "-"*40 + "\n\n\n\n")
+        p.text("" + "-"*25 + "\n\n\n\n")
 
-        # --- 4. INFO VENTA ---
+        # --- INFO VENTA ---
         p.set(align='left', bold=False)
         # Usamos :<15 para la etiqueta y el resto para el dato
         p.text(f"{'FECHA:':<15}{datos.get('date', ''):<33}\n")
@@ -99,11 +100,39 @@ def imprimir():
         p.text(f"{'VENDEDOR:':<15}{datos.get('cashier', ''):<33}\n")
         p.text("-" * 48 + "\n")
         
-        p.text(f"{'CLIENTE:':<15}{datos.get('cliente_nombre', 'Consumidor Final'):<33}\n")
-        p.text(f"{'RUT:':<15}{datos.get('cliente_rut', '66.666.666-6'):<33}\n")
-        p.text("-" * 48 + "\n")
+        # --- SECCIÓN DATOS FACTURACIÓN (Solo si es Factura) ---
+        if datos.get('document_type', '') == "FACTURA ELECTRONICA" and datos.get('invoices_data'):
+            p.set(align='left', bold=True)
+            p.text("DATOS DEL CLIENTE\n")
+            p.set(bold=False)
+            
+            # invoices_data suele venir como un objeto/diccionario con los datos del partner
+            inv = datos.get('invoices_data')
+            
+            # Validación campo por campo
+            if inv.get('name'):
+                p.text(f"RAZON: {str(inv['name']).upper()[:39]}\n")
+            
+            if inv.get('vat'):
+                p.text(f"RUT  : {inv['vat']}\n")
+                
+            if inv.get('l10n_cl_activity_description'):
+                p.text(f"GIRO : {str(inv['l10n_cl_activity_description']).upper()[:39]}\n")
+                
+            if inv.get('street'):
+                direccion = f"{inv['street']} {inv.get('street2') or ''}".strip()
+                p.text(f"DIR  : {direccion[:41]}\n")
+                
+            if inv.get('city'):
+                p.text(f"CIUDAD: {inv['city'].upper()}\n")
+                
+            if inv.get('phone'):
+                p.text(f"FONO : {inv['phone']}\n")
+            
+            p.text("-" * 48 + "\n")
 
-        # --- 5. DETALLE DE PRODUCTOS (ANCHO 48) ---
+
+        # --- DETALLE DE PRODUCTOS (ANCHO 48) ---
         p.set(align='left', bold=True)
         # 34 espacios para descripción, 14 para el total
         p.text(f"{'DESCRIPCION':<34}{'TOTAL':>14}\n")
@@ -118,7 +147,7 @@ def imprimir():
             
         p.text("-" * 48 + "\n")
         
-        # --- 6. TOTALES ---
+        # --- TOTALES ---
         total_int = int(datos.get('total', 0))
         neto = round(total_int / 1.19)
         iva = total_int - neto
@@ -133,7 +162,22 @@ def imprimir():
         p.set(width=1, height=1)
         p.text("-" * 48 + "\n")
 
-        # --- 7. TIMBRE SII ---
+        # --- 7. DETALLE DE PAGOS ---
+        p.set(align='left', bold=True)
+        p.text(f"{'FORMA DE PAGO':<34}{'MONTO':>14}\n")
+        p.set(bold=False)
+
+        methods = datos.get('payment_methods', [])
+        
+        for m in methods:
+            # Nombre a la izquierda (34 char) y monto a la derecha (14 char)
+            nombre = str(m.get('name', ''))[:30]
+            monto = f"$ {formato_moneda(int(m.get('amount', 0)))}"
+            p.text(f"{nombre:<34}{monto:>14}\n")
+            
+        p.text("-" * 48 + "\n")
+
+        # --- TIMBRE SII ---
         sii_b64 = datos.get('sii_barcode')
         if sii_b64:
             try:
@@ -169,8 +213,8 @@ def imprimir():
             p.text(f"Fecha: {datos['resolution_date']}\n")
         
         p.text("\n*** GRACIAS POR SU COMPRA ***\n")
-        p.text(f"ID EMISION: {datos.get('name')}\n")
-        
+        p.text(f"ID EMISION: {datos.get('name')}\n")               
+            
         # Espacio para el corte
         p.text("\n\n\n\n") 
         p.cut()
@@ -183,5 +227,5 @@ def imprimir():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 if __name__ == '__main__':
-    # Mantener puerto 8080 como en tu script
+    # PUERTO QUE ESPERA EL MÒDULO DE ODOO
     app.run(host='0.0.0.0', port=8080, debug=False)
