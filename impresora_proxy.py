@@ -90,7 +90,7 @@ def imprimir():
         p.text(f"RUT:{datos.get('company_rut', '')} \n")
         p.text(f" {datos.get('document_type', '')} \n")
         p.text(f"Nº: {datos.get('voucher_number', '')} \n")
-        p.text("" + "-"*25 + "\n\n\n\n")
+        p.text("" + "-"*25 + "\n\n\n")
 
         # --- INFO VENTA ---
         p.set(align='left', bold=False)
